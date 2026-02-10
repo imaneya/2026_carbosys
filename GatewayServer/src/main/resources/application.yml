@@ -64,6 +64,13 @@ spring:
           filters:
             - RewritePath=/home2/(?<segment>.*), /home2/${segment}
 
+        - id: home3
+          uri: lb://HOME3
+          predicates:
+            - Path=/home3/**
+          filters:
+            - RewritePath=/home3/(?<segment>.*), /home3/${segment}
+
         - id: EgovLogin
           uri: lb://EGOVLOGIN
           predicates:
