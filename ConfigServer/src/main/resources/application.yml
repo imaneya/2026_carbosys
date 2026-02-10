@@ -1,0 +1,22 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: ConfigServer
+  profiles:
+    active: native # 로컬 파일시스템 기반 저장소 사용
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config # 설정 파일 경로 (jar 내부 또는 src/main/resources/config)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, refresh
+  endpoint:
+    refresh:
+      enabled: true
