@@ -10,12 +10,16 @@ import java.util.Locale;
 public class Home3ManageController {
 
     @RequestMapping(value = "/home3", method = { RequestMethod.GET, RequestMethod.POST })
-    public String index(Locale locale, org.springframework.ui.Model model) {
+    public String index(Locale locale, org.springframework.ui.Model model,
+            @org.springframework.web.bind.annotation.CookieValue(value = "accessToken", required = false) String accessToken) {
+        model.addAttribute("isLoggedIn", accessToken != null);
         return "home";
     }
 
     @RequestMapping(value = "/home3/en", method = { RequestMethod.GET, RequestMethod.POST })
-    public String indexEn(Locale locale, org.springframework.ui.Model model) {
+    public String indexEn(Locale locale, org.springframework.ui.Model model,
+            @org.springframework.web.bind.annotation.CookieValue(value = "accessToken", required = false) String accessToken) {
+        model.addAttribute("isLoggedIn", accessToken != null);
         return "home_en";
     }
 

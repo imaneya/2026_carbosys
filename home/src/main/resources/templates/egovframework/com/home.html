@@ -91,7 +91,10 @@
                         <span>|</span>
                         <button class="hover:text-charcoal-gray" onclick="location.href='/home?language=en'">EN</button>
                     </div>
-                    <button id="loginBtn"
+                    <button th:if="${isLoggedIn}" id="logoutBtn"
+                        class="hidden sm:block text-sm font-medium text-charcoal-gray hover:text-emerald-green px-4"
+                        onclick="fetch('/signin/actionLogout', {method: 'POST', headers: {'Content-Type': 'application/json'}}).then(r => r.json()).then(d => {if(d.status === 'success') location.reload();});">로그아웃</button>
+                    <button th:unless="${isLoggedIn}" id="loginBtn"
                         class="hidden sm:block text-sm font-medium text-charcoal-gray hover:text-emerald-green px-4"
                         onclick="location.href='/signin/loginView'">로그인</button>
                     <button

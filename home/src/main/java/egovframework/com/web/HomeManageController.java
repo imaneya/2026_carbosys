@@ -10,8 +10,10 @@ import java.util.Locale;
 @Controller
 public class HomeManageController {
 
-    @RequestMapping(value="/home")
-    public String index(Locale locale, Model model) {
+    @RequestMapping(value = "/home")
+    public String index(Locale locale, Model model,
+            @org.springframework.web.bind.annotation.CookieValue(value = "accessToken", required = false) String accessToken) {
+        model.addAttribute("isLoggedIn", accessToken != null);
         if ("en".equals(locale.getLanguage())) {
             return "home_en";
         }
