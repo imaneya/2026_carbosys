@@ -123,8 +123,10 @@
         <div
             class="w-full max-w-[480px] bg-white border border-[var(--kr-gov-border-light)] rounded-lg shadow-sm overflow-hidden">
             <div class="flex border-b border-[var(--kr-gov-border-light)] bg-gray-50">
-                <button class="flex-1 py-4 text-[16px] login-tab-active">Domestic Users</button>
-                <button class="flex-1 py-4 text-[16px] login-tab-inactive">Overseas Businesses</button>
+                <button type="button" class="flex-1 py-4 text-[16px] login-tab login-tab-active"
+                    data-value="GNR">Domestic Users</button>
+                <button type="button" class="flex-1 py-4 text-[16px] login-tab login-tab-inactive"
+                    data-value="ENT">Overseas Businesses</button>
             </div>
             <div class="p-8 lg:p-10">
                 <form action="/signin/actionLogin" method="post" class="space-y-6">
@@ -162,7 +164,7 @@
                     </div>
                     <button
                         class="w-full h-14 bg-[var(--kr-gov-blue)] text-white text-lg font-bold rounded-[var(--kr-gov-radius)] hover:bg-[var(--kr-gov-blue-hover)] transition-colors focus-visible"
-                        type="submit">
+                        onclick="loginProcess()">
                         Log In
                     </button>
                     <div
@@ -203,7 +205,7 @@
                             </button>
                         </div>
                     </div>
-                    <input name="userSe" type="hidden" value="USR" />
+                    <input id="userSe" name="userSe" type="hidden" value="USR" />
                 </form>
             </div>
         </div>
@@ -245,6 +247,68 @@
             </div>
         </div>
     </footer>
+
+    <form id="loginContentForm" name="loginContentForm" th:object="${loginVO}">
+        <input type="hidden" id="userInfo" name="userInfo" />
+    </form>
+
+    <script th:inline="javascript" defer>
+        document.querySelectorAll(".login-tab").forEach(tab => {
+            tab.addEventListener("click", function () {
+                document.querySelectorAll(".login-tab").forEach(t => {
+                    t.classList.remove("login-tab-active");
+                    t.classList.add("login-tab-inactive");
+                });
+                this.classList.remove("login-tab-inactive");
+                this.classList.add("login-tab-active");
+            });
+        });
+
+        function loginProcess() {
+            let userId = document.getElementById('id').value;
+            let userPw = document.getElementById('password').value;
+            let userSe;
+            document.querySelectorAll(".login-tab").forEach(tab => {
+                if (tab.classList.contains("login-tab-active")) {
+                    userSe = tab.getAttribute("data-value");
+                }
+            });
+
+            if (userId.length === 0) {
+                alert('Please enter your ID');
+                return false;
+            } else if (userPw.length === 0) {
+                alert('Please enter your password');
+                return false;
+            } else {
+                const param = { userId: userId, userPw: userPw, userSe: userSe };
+                fetch('/signin/actionLogin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(param)
+                })
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.status === 'loginFailure') {
+                            alert(response.errors);
+                            location.reload();
+                        } else {
+                            contentView(response.userInfo);
+                        }
+                    })
+            }
+        }
+
+        function contentView(userInfo) {
+            document.getElementById('userInfo').value = userInfo;
+            const form = document.getElementById('loginContentForm');
+            form.setAttribute('method', 'post');
+            form.setAttribute('action', '/signin/loginView');
+            form.submit();
+        }
+    </script>
 
 </body>
 
