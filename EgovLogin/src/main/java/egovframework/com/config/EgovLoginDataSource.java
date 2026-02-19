@@ -11,31 +11,31 @@ import javax.sql.DataSource;
 @Configuration
 public class EgovLoginDataSource {
 
-    @Value("${datasource.driver-class-name:com.mysql.cj.jdbc.Driver}")
+    @Value("${spring.datasource.driver-class-name:cubrid.jdbc.driver.CUBRIDDriver}")
     private String driverClassName;
 
-    @Value("${datasource.url:jdbc:mysql://localhost:3306/com?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}")
+    @Value("${spring.datasource.url:jdbc:cubrid:localhost:33000:com:::?charset=UTF-8}")
     private String url;
 
-    @Value("${datasource.username:com}")
+    @Value("${spring.datasource.username:dba}")
     private String username;
 
-    @Value("${datasource.password:com01}")
+    @Value("${spring.datasource.password:}")
     private String password;
 
-    @Value("${datasource.hikari.maximum-pool-size:20}")
+    @Value("${spring.datasource.hikari.maximum-pool-size:20}")
     private int maximumPoolSize;
 
-    @Value("${datasource.hikari.connection-timeout:20000}")
+    @Value("${spring.datasource.hikari.connection-timeout:20000}")
     private long connectionTimeout;
 
-    @Value("${datasource.hikari.idle-timeout:30000}")
+    @Value("${spring.datasource.hikari.idle-timeout:30000}")
     private long idleTimeout;
 
-    @Value("${datasource.hikari.minimum-idle:5}")
+    @Value("${spring.datasource.hikari.minimum-idle:5}")
     private int minimumIdle;
 
-    @Value("${datasource.hikari.max-lifetime:180000}")
+    @Value("${spring.datasource.hikari.max-lifetime:180000}")
     private long maxLifetime;
 
     @Bean(name = "dataSource")

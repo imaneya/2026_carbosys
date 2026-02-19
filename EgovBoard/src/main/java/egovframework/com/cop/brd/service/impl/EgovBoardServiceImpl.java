@@ -66,8 +66,7 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
             @Qualifier("egovBoardIdGnrService") EgovIdGnrService boardIdGnrService,
             @Qualifier("egovBbsSyncLogIdGnrService") EgovIdGnrService bbsSyncLogIdGnrService,
             StreamBridge streamBridge,
-            JPAQueryFactory queryFactory
-    ) {
+            JPAQueryFactory queryFactory) {
         this.repository = repository;
         this.bbsSyncLogRepository = bbsSyncLogRepository;
         this.egovCommentRepository = egovCommentRepository;
@@ -87,12 +86,12 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
         QBbsMaster bbsMaster = QBbsMaster.bbsMaster;
         QComment comment = QComment.comment;
 
-        List<Tuple> results = boardListQuery(bbsVO,"notice").fetch();
+        List<Tuple> results = boardListQuery(bbsVO, "notice").fetch();
 
         List<BoardDTO> content = results.stream().map(tuple -> {
 
             Bbs b = tuple.get(bbs);
-            UserMaster user =tuple.get(userMaster);
+            UserMaster user = tuple.get(userMaster);
             BbsMaster bm = tuple.get(bbsMaster);
             Comment c = tuple.get(comment);
 
@@ -123,8 +122,7 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
                     b.getNoticeAt(),
                     b.getSecretAt(),
                     0,
-                    bbsNm
-            );
+                    bbsNm);
         }).collect(Collectors.toList());
         return content;
     }
@@ -150,14 +148,13 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
         }
         where.and(bbs.useAt.eq("Y")).and(bbs.noticeAt.isNull());
 
-        JPAQuery<Tuple> query = boardListQuery(bbsVO,"list");
+        JPAQuery<Tuple> query = boardListQuery(bbsVO, "list");
 
         List<Tuple> results = query.offset(pageable.getOffset()).limit(pageable.getPageSize()).fetch();
 
         long total = Optional.ofNullable(
                 queryFactory
-                        .select(bbs.count()).
-                        from(bbs)
+                        .select(bbs.count()).from(bbs)
                         .leftJoin(userMaster)
                         .on(bbs.frstRegisterId.eq(userMaster.esntlId))
                         .leftJoin(bbsMaster)
@@ -168,13 +165,13 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
                         .where(bbs.bbsId.bbsId.eq(bbsVO.getBbsId())
                                 .and(bbs.useAt.eq("Y")).and(bbs.noticeAt.isNull())
                                 .and(where))
-                        .fetchOne()
-        ).orElse(0L);
+                        .fetchOne())
+                .orElse(0L);
 
         List<BoardDTO> content = results.stream().map(tuple -> {
 
             Bbs b = tuple.get(bbs);
-            UserMaster user =tuple.get(userMaster);
+            UserMaster user = tuple.get(userMaster);
             BbsMaster bm = tuple.get(bbsMaster);
             Comment c = tuple.get(comment);
 
@@ -205,11 +202,10 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
                     b.getNoticeAt(),
                     b.getSecretAt(),
                     0,
-                    bbsNm
-            );
+                    bbsNm);
         }).collect(Collectors.toList());
 
-        Page<BoardDTO> list = new PageImpl<>(content,pageable,total);
+        Page<BoardDTO> list = new PageImpl<>(content, pageable, total);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", list.getContent());
@@ -227,30 +223,25 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
 
         QBbs bbs = QBbs.bbs;
 
-        NumberTemplate<Integer> percentageExpr =Expressions.numberTemplate(Integer.class,
+        NumberTemplate<Integer> percentageExpr = Expressions.numberTemplate(Integer.class,
                 "COALESCE(MAX({0}), 0) + 1",
                 bbs.rdcnt);
 
         int count = Optional.ofNullable(
                 queryFactory
-                        .select(percentageExpr).
-                        from(bbs).
-                        where(bbs.bbsId.bbsId.eq(bbsVO.getBbsId())
-                                .and(bbs.bbsId.nttId.eq(bbsVO.getNttId()))).fetchOne()
-        ).orElse(0);
+                        .select(percentageExpr).from(bbs).where(bbs.bbsId.bbsId.eq(bbsVO.getBbsId())
+                                .and(bbs.bbsId.nttId.eq(bbsVO.getNttId())))
+                        .fetchOne())
+                .orElse(0);
 
         bbsVO.setRdcnt(count);
         bbsVO.setLastUpdusrId(userInfo.get("uniqId"));
-        bbsVO.setLastUpdtPnttm(String.valueOf(LocalDateTime.now()));
-
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
-        LocalDateTime formatdate = LocalDateTime.parse(bbsVO.getLastUpdtPnttm(), inputFormatter);
-        String formatted = formatdate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        LocalDateTime date = LocalDateTime.parse(formatted, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime date = LocalDateTime.now().withNano(0);
+        bbsVO.setLastUpdtPnttm(date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         queryFactory.update(bbs)
-                .set(bbs.rdcnt,bbsVO.getRdcnt())
-                .set(bbs.lastUpdusrId,bbsVO.getLastUpdusrId())
+                .set(bbs.rdcnt, bbsVO.getRdcnt())
+                .set(bbs.lastUpdusrId, bbsVO.getLastUpdusrId())
                 .set(bbs.lastUpdtPnttm, date)
                 .where(bbs.bbsId.bbsId.eq(bbsVO.getBbsId()).and(bbs.bbsId.nttId.eq(bbsVO.getNttId())))
                 .execute();
@@ -260,87 +251,90 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
 
     @Transactional
     @Override
-    public BbsVO insert(BbsVO bbsVO, List<MultipartFile> files, Map<String, String> userInfo) throws IOException, FdlException {
+    public BbsVO insert(BbsVO bbsVO, List<MultipartFile> files, Map<String, String> userInfo)
+            throws IOException, FdlException {
 
         String attachFileId = null;
-            if (!files.isEmpty()) {
-                List<FileVO> filsVOList = egovFileUtility.parseFile(files);
-                attachFileId = egovFileService.insertFiles(filsVOList);
-            }
+        if (!files.isEmpty()) {
+            List<FileVO> filsVOList = egovFileUtility.parseFile(files);
+            attachFileId = egovFileService.insertFiles(filsVOList);
+        }
 
-            bbsVO.setAtchFileId(attachFileId);
-            bbsVO.setFrstRegisterId(userInfo.get("uniqId"));
-            bbsVO.setLastUpdusrId(userInfo.get("uniqId"));
-            bbsVO.setUseAt("Y");
+        bbsVO.setAtchFileId(attachFileId);
+        bbsVO.setFrstRegisterId(userInfo.get("uniqId"));
+        bbsVO.setLastUpdusrId(userInfo.get("uniqId"));
+        bbsVO.setUseAt("Y");
 
-            /* 답글 처리 */
-            if ("Y".equals(bbsVO.getAnswerAt())) {
-                bbsVO.setParntscttNo(Math.toIntExact(bbsVO.getNttId()));
-                BoardDTO boardDTO = selectboardDetail(bbsVO);
+        /* 답글 처리 */
+        if ("Y".equals(bbsVO.getAnswerAt())) {
+            bbsVO.setParntscttNo(Math.toIntExact(bbsVO.getNttId()));
+            BoardDTO boardDTO = selectboardDetail(bbsVO);
 
-                long nttId = boardIdGnrService.getNextLongId();
-                bbsVO.setNttNo(boardDTO.getNttNo() + 1);
-                bbsVO.setAnswerLc(boardDTO.getAnswerLc() + 1);
-                bbsVO.setRdcnt(0);
-                bbsVO.setNttId(nttId);
-                bbsVO.setSortOrdr(boardDTO.getSortOrdr());
-            } else {
-                bbsVO.setParntscttNo(0);
-                bbsVO.setAnswerLc(0);
-                bbsVO.setNttNo(1);
-                bbsVO.setAnswerAt("N");
-                bbsVO.setNttId(boardIdGnrService.getNextLongId());
-                bbsVO.setSortOrdr(Math.toIntExact(bbsVO.getNttId()));
-            }
+            long nttId = boardIdGnrService.getNextLongId();
+            bbsVO.setNttNo(boardDTO.getNttNo() + 1);
+            bbsVO.setAnswerLc(boardDTO.getAnswerLc() + 1);
+            bbsVO.setRdcnt(0);
+            bbsVO.setNttId(nttId);
+            bbsVO.setSortOrdr(boardDTO.getSortOrdr());
+        } else {
+            bbsVO.setParntscttNo(0);
+            bbsVO.setAnswerLc(0);
+            bbsVO.setNttNo(1);
+            bbsVO.setAnswerAt("N");
+            bbsVO.setNttId(boardIdGnrService.getNextLongId());
+            bbsVO.setSortOrdr(Math.toIntExact(bbsVO.getNttId()));
+        }
 
-            /* 익명글 처리 */
-            if (!ObjectUtils.isEmpty(bbsVO.getAnonymousAt())) {
-                bbsVO.setNtcrId("annoymous");
-                bbsVO.setNtcrNm("익명");
-                bbsVO.setFrstRegisterId("annoymous");
-            } else {
-                bbsVO.setNtcrId(userInfo.get("uniqId"));
-                bbsVO.setNtcrNm(userInfo.get("userName"));
-            }
+        /* 익명글 처리 */
+        if (!ObjectUtils.isEmpty(bbsVO.getAnonymousAt())) {
+            bbsVO.setNtcrId("annoymous");
+            bbsVO.setNtcrNm("익명");
+            bbsVO.setFrstRegisterId("annoymous");
+        } else {
+            bbsVO.setNtcrId(userInfo.get("uniqId"));
+            bbsVO.setNtcrNm(userInfo.get("userName"));
+        }
 
-            bbsVO = EgovBoardUtility.bbsEntityToVO(repository.save(EgovBoardUtility.bbsVOToEntity(bbsVO)));
+        bbsVO = EgovBoardUtility.bbsEntityToVO(repository.save(EgovBoardUtility.bbsVOToEntity(bbsVO)));
 
-            syncLogProcess(bbsVO);
+        syncLogProcess(bbsVO);
 
         return bbsVO;
     }
 
     @Override
-    public BbsVO update(BbsVO bbsVO, List<MultipartFile> files, Map<String, String> userInfo) throws IOException, FdlException {
+    public BbsVO update(BbsVO bbsVO, List<MultipartFile> files, Map<String, String> userInfo)
+            throws IOException, FdlException {
 
-            if (!files.isEmpty()) {
-                List<FileVO> filsVOList = egovFileUtility.parseFile(files);
-                for (int i = 0; i < filsVOList.size(); i++) {
-                    filsVOList.get(i).setAtchFileId(bbsVO.getAtchFileId());
-                }
-                egovFileService.insertFiles(filsVOList);
+        if (!files.isEmpty()) {
+            List<FileVO> filsVOList = egovFileUtility.parseFile(files);
+            for (int i = 0; i < filsVOList.size(); i++) {
+                filsVOList.get(i).setAtchFileId(bbsVO.getAtchFileId());
             }
+            egovFileService.insertFiles(filsVOList);
+        }
 
-//            BoardDTO dto = repository.selectBbsDetail(bbsVO.getBbsId(), bbsVO.getNttId());
-            BoardDTO dto = selectboardDetail(bbsVO);
-            dto.setNoticeAt(bbsVO.getNoticeAt());
-            dto.setSecretAt(bbsVO.getSecretAt());
-            dto.setSjBoldAt(bbsVO.getSjBoldAt());
-            dto.setNttCn(bbsVO.getNttCn());
-            dto.setNttSj(bbsVO.getNttSj());
-            dto.setNtceBgnde(bbsVO.getNtceBgnde());
-            dto.setNtceEndde(bbsVO.getNtceEndde());
-            dto.setAtchFileId(bbsVO.getAtchFileId());
-            BeanUtils.copyProperties(dto, bbsVO);
+        // BoardDTO dto = repository.selectBbsDetail(bbsVO.getBbsId(),
+        // bbsVO.getNttId());
+        BoardDTO dto = selectboardDetail(bbsVO);
+        dto.setNoticeAt(bbsVO.getNoticeAt());
+        dto.setSecretAt(bbsVO.getSecretAt());
+        dto.setSjBoldAt(bbsVO.getSjBoldAt());
+        dto.setNttCn(bbsVO.getNttCn());
+        dto.setNttSj(bbsVO.getNttSj());
+        dto.setNtceBgnde(bbsVO.getNtceBgnde());
+        dto.setNtceEndde(bbsVO.getNtceEndde());
+        dto.setAtchFileId(bbsVO.getAtchFileId());
+        BeanUtils.copyProperties(dto, bbsVO);
 
-            bbsVO.setLastUpdtPnttm(String.valueOf(LocalDateTime.now()));
-            bbsVO.setLastUpdusrId(userInfo.get("uniqId"));
+        bbsVO.setLastUpdtPnttm(String.valueOf(LocalDateTime.now()));
+        bbsVO.setLastUpdusrId(userInfo.get("uniqId"));
 
-            repository.save(EgovBoardUtility.bbsVOToEntity(bbsVO));
+        repository.save(EgovBoardUtility.bbsVOToEntity(bbsVO));
 
-            bbsVO = EgovBoardUtility.bbsEntityToVO(repository.save(EgovBoardUtility.bbsVOToEntity(bbsVO)));
+        bbsVO = EgovBoardUtility.bbsEntityToVO(repository.save(EgovBoardUtility.bbsVOToEntity(bbsVO)));
 
-            syncLogProcess(bbsVO);
+        syncLogProcess(bbsVO);
         return bbsVO;
     }
 
@@ -353,7 +347,8 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
         // 메인(최상위)게시글인 경우
         if ("N".equals(bbsVO.getNoticeAt())) {
             List<Bbs> bbsList = repository.findAllByBbsIdAndSortOrdr(bbsId, (long) bbsVO.getSortOrdr());
-            List<Comment> commentList = egovCommentRepository.findAllByCommentId_BbsIdAndCommentId_NttId(bbsVO.getBbsId(), bbsVO.getNttId());
+            List<Comment> commentList = egovCommentRepository
+                    .findAllByCommentId_BbsIdAndCommentId_NttId(bbsVO.getBbsId(), bbsVO.getNttId());
             if (bbsList != null) {
                 for (int i = 0; i < bbsList.size(); i++) {
                     bbsList.get(i).setUseAt("N");
@@ -367,9 +362,10 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
                     egovCommentRepository.save(comment);
                 }
             }
-        } else {  // 답글인 경우
+        } else { // 답글인 경우
             Bbs bbs = repository.findById(bbsId).get();
-            List<Comment> commentList = egovCommentRepository.findAllByCommentId_BbsIdAndCommentId_NttId(bbsId.getBbsId(), bbsId.getNttId());
+            List<Comment> commentList = egovCommentRepository
+                    .findAllByCommentId_BbsIdAndCommentId_NttId(bbsId.getBbsId(), bbsId.getNttId());
             bbs.setUseAt("N");
             for (Comment comment : commentList) {
                 comment.setUseAt("N");
@@ -427,12 +423,13 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
 
                 streamBridge.send("searchProducer-out-0", event);
             } catch (Exception e) {
-                log.warn("Failed to send event to RabbitMQ. Event will be processed later via COMTNBBSSYNCLOG: {}", e.getMessage());
+                log.warn("Failed to send event to RabbitMQ. Event will be processed later via COMTNBBSSYNCLOG: {}",
+                        e.getMessage());
             }
         }
     }
 
-    private JPAQuery<Tuple> boardListQuery(BbsVO bbsVO, String listNm){
+    private JPAQuery<Tuple> boardListQuery(BbsVO bbsVO, String listNm) {
 
         String searchCondition = bbsVO.getSearchCondition();
         String searchKeyword = bbsVO.getSearchKeyword();
@@ -451,9 +448,9 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
             where.and(userMaster.userNm.eq(searchKeyword));
         }
 
-        if(listNm.equals("notice")){
+        if (listNm.equals("notice")) {
             where.and(bbs.useAt.eq("Y")).and(bbs.noticeAt.eq("Y"));
-        }else{
+        } else {
             where.and(bbs.useAt.eq("Y")).and(bbs.noticeAt.isNull());
         }
 
@@ -469,17 +466,18 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
                         .and(bbs.bbsId.bbsId.eq(comment.commentId.bbsId)))
                 .where(bbs.bbsId.bbsId.eq(bbsVO.getBbsId())
                         .and(where))
-                .orderBy(bbs.sortOrdr.desc(), bbs.parntscttNo.asc(), bbs.answerLc.asc(), bbs.nttNo.asc(), bbs.frstRegistPnttm.desc());
+                .orderBy(bbs.sortOrdr.desc(), bbs.parntscttNo.asc(), bbs.answerLc.asc(), bbs.nttNo.asc(),
+                        bbs.frstRegistPnttm.desc());
     }
 
-    private BoardDTO selectboardDetail(BbsVO bbsVO){
+    private BoardDTO selectboardDetail(BbsVO bbsVO) {
 
         QBbs bbs = QBbs.bbs;
         QUserMaster userMaster = QUserMaster.userMaster;
         QBbsMaster bbsMaster = QBbsMaster.bbsMaster;
 
         Tuple tuple = queryFactory
-                .select(bbs,userMaster,bbsMaster)
+                .select(bbs, userMaster, bbsMaster)
                 .from(bbs)
                 .leftJoin(userMaster)
                 .on(bbs.frstRegisterId.eq(userMaster.esntlId))
@@ -490,10 +488,11 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
                         .and(bbs.useAt.eq("Y")))
                 .fetchOne();
 
-        if (tuple == null) return null;
+        if (tuple == null)
+            return null;
 
         Bbs b = tuple.get(bbs);
-        UserMaster user =tuple.get(userMaster);
+        UserMaster user = tuple.get(userMaster);
         BbsMaster bm = tuple.get(bbsMaster);
 
         String userNm = (user != null && user.getUserNm() != null) ? user.getUserNm() : b.getNtcrNm();
@@ -523,8 +522,7 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
                 b.getNoticeAt(),
                 b.getSecretAt(),
                 0,
-                bbsNm
-        );
+                bbsNm);
     }
 
 }

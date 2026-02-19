@@ -16,24 +16,25 @@ spring:
   profiles:
     active: local
   datasource:
-    driver-class-name: ${datasource.driver-class-name:com.mysql.cj.jdbc.Driver}
-    url: ${datasource.url:jdbc:mysql://localhost:3306/com?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC}
-    username: ${datasource.username:com}
-    password: ${datasource.password:com01}
+    driver-class-name: cubrid.jdbc.driver.CUBRIDDriver
+    url: jdbc:cubrid:localhost:33000:com:::?charset=UTF-8
+    username: dba
+    password: "" # 비밀번호 없음
     hikari:
-      maximum-pool-size: ${datasource.hikari.maximum-pool-size:20}
-      connection-timeout: ${datasource.hikari.connection-timeout:20000}
-      idle-timeout: ${datasource.hikari.idle-timeout:30000}
-      minimum-idle: ${datasource.hikari.minimum-idle:5}
-      max-lifetime: ${datasource.hikari.max-lifetime:180000}
+      maximum-pool-size: 20
+      connection-timeout: 20000
+      idle-timeout: 30000
+      minimum-idle: 5
+      max-lifetime: 180000
   jpa:
+    database-platform: org.hibernate.dialect.CUBRIDDialect
     hibernate:
-      ddl-auto: ${jpa.hibernate.ddl-auto:none}
-    open-in-view: ${jpa.open-in-view:false}
-    show-sql: ${jpa.show-sql:true}
+      ddl-auto: none
+    open-in-view: false
+    show-sql: true
     properties:
       hibernate:
-        format_sql: ${jpa.properties.hibernate.format_sql:true}
+        format_sql: true
 
 logging:
   level:

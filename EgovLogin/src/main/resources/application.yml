@@ -19,6 +19,26 @@ spring:
     import: optional:configserver:http://localhost:8888
   profiles:
     active: local
+  datasource:
+    driver-class-name: cubrid.jdbc.driver.CUBRIDDriver
+    url: jdbc:cubrid:localhost:33000:com:::?charset=UTF-8
+    username: dba
+    password: "" # 비밀번호 없음
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 20000
+      idle-timeout: 30000
+      minimum-idle: 5
+      max-lifetime: 180000
+  jpa:
+    database-platform: org.hibernate.dialect.CUBRIDDialect
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
   messages:
     encoding: UTF-8
   servlet:
