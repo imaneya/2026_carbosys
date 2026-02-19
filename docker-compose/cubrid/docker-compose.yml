@@ -1,0 +1,13 @@
+services:
+  cubrid:
+    image: cubrid/cubrid:11.2
+    environment:
+      TZ: Asia/Seoul
+      DB_ROOT_PASSWORD: cubrid
+    volumes:
+      - "./init/:/docker-entrypoint-initdb.d/"
+    platform: linux/x86_64
+    ports:
+      - "33000:33000"
+    container_name: cubrid
+    # command: cubrid broker off
