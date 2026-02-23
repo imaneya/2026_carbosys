@@ -23,6 +23,7 @@
 		<module>EgovMobileId</module>
 		<module>EgovQuestionnaire</module>
 		<module>EgovSearch</module>
+		<module>EgovJoin</module>
 		<module>EurekaServer</module>
 		<module>GatewayServer</module>
 	</modules>

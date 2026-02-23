@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>회원가입 4단계: 정보 입력 - CCUS 통합관리 포털</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&amp;family=Public+Sans:wght@400;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style type="text/tailwindcss">
+        :root {
+            --kr-gov-blue: #00378b;
+            --kr-gov-blue-hover: #002d72;
+            --kr-gov-text-primary: #1a1a1a;
+            --kr-gov-text-secondary: #4d4d4d;
+            --kr-gov-border-light: #d9d9d9;
+            --kr-gov-focus: #005fde;
+            --kr-gov-bg-gray: #f8f9fa;
+            --kr-gov-radius: 5px;
+            --kr-gov-error: #d32f2f;
+            --kr-gov-success: #2e7d32;
+        }
+        @layer base {
+            body { font-family: 'Noto Sans KR', 'Public Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+            .skip-link {
+                @apply absolute -top-full left-0 bg-[var(--kr-gov-blue)] text-white p-3 z-[100] transition-all focus:top-0 focus:outline-none focus:ring-2 focus:ring-white;
+            }
+            .focus-visible:focus-visible {
+                outline: 3px solid var(--kr-gov-focus);
+                outline-offset: 2px;
+            }
+            .form-label {
+                @apply block text-sm font-bold text-[var(--kr-gov-text-primary)] mb-2;
+            }
+            .form-input {
+                @apply w-full h-12 px-4 border border-[var(--kr-gov-border-light)] rounded-[var(--kr-gov-radius)] focus:ring-2 focus:ring-[var(--kr-gov-focus)] focus:border-transparent transition-all outline-none;
+            }
+            .section-title {
+                @apply text-lg font-bold text-[var(--kr-gov-text-primary)] flex items-center gap-2 mb-6 pb-2 border-b-2 border-gray-100;
+            }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'wght' 400, 'opsz' 24;
+            font-size: 24px;
+        }
+        .step-active {
+            @apply flex flex-col items-center gap-2 text-[var(--kr-gov-blue)] font-bold;
+        }
+        .step-inactive {
+            @apply flex flex-col items-center gap-2 text-gray-400 font-medium;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00378b",
+                        "gov-gray": "#767676",
+                    },
+                    borderRadius: {
+                        'gov': '5px',
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-[var(--kr-gov-bg-gray)] text-[var(--kr-gov-text-primary)] min-h-screen flex flex-col">
+    <a class="skip-link" href="#main-content">본문 바로가기</a>
+    <div class="bg-white border-b border-[var(--kr-gov-border-light)]">
+        <div class="max-w-7xl mx-auto px-4 lg:px-8 py-2 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <img alt="대한민국 정부 상징" class="h-4"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8BPzqtzSLVGSrjt4mzhhVBy9SocCRDssk1F3XRVu7Xq9jHh7qzzt48wFi8qduCiJmB0LRQczPB7waPe3h0gkjn3jOEDxt6UJSJjdXNf8P-4WlM2BEZrfg2SL91uSiZrFcCk9KYrsdg-biTS9dtJ_OIghDBEVoAzMc33XcCYR_UP0QQdoYzBe840YrtH40xGyB9MSr0QH4D0foqlvOhG0jX8CDayXNlDsSKlfClVd3K2aodlwg4xSxgXHB3vnnnA0L2yNBNihQQg0" />
+                <span class="text-[13px] font-medium text-[var(--kr-gov-text-secondary)]">대한민국 정부 공식 서비스</span>
+            </div>
+        </div>
+    </div>
+    <header class="bg-white border-b border-[var(--kr-gov-border-light)] sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-3">
+                    <a class="flex items-center gap-2" href="/">
+                        <span class="material-symbols-outlined text-[32px] text-[var(--kr-gov-blue)]"
+                            style="font-variation-settings: 'wght' 600;">eco</span>
+                        <div class="flex flex-col">
+                            <h1 class="text-xl font-bold tracking-tight text-[var(--kr-gov-text-primary)]">CCUS 통합관리 포털
+                            </h1>
+                            <p
+                                class="text-[10px] text-[var(--kr-gov-text-secondary)] font-bold uppercase tracking-wider">
+                                Carbon Capture, Utilization and Storage</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div
+                        class="hidden sm:flex items-center gap-1.5 text-xs font-bold text-emerald-600 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-100">
+                        <span class="material-symbols-outlined text-[16px]">lock</span>
+                        안전한 SSL 보안 통신 중
+                    </div>
+                    <div
+                        class="flex border border-[var(--kr-gov-border-light)] rounded-[var(--kr-gov-radius)] overflow-hidden">
+                        <button class="px-3 py-1 text-xs bg-[var(--kr-gov-blue)] text-white font-bold">KO</button>
+                        <button
+                            class="px-3 py-1 text-xs bg-white text-[var(--kr-gov-text-secondary)] hover:bg-gray-100 font-bold border-l border-[var(--kr-gov-border-light)]">EN</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-grow py-12 px-4" id="main-content">
+        <div class="max-w-[800px] mx-auto">
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold text-center mb-8">회원가입</h2>
+                <div class="flex justify-between items-center relative px-8">
+                    <div class="absolute top-5 left-16 right-16 h-0.5 bg-gray-200 -z-10"></div>
+                    <div class="step-inactive">
+                        <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm">1</div>
+                        <span class="text-xs">회원유형</span>
+                    </div>
+                    <div class="step-inactive">
+                        <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm">2</div>
+                        <span class="text-xs">약관동의</span>
+                    </div>
+                    <div class="step-inactive">
+                        <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm">3</div>
+                        <span class="text-xs">본인확인</span>
+                    </div>
+                    <div class="step-active">
+                        <div
+                            class="w-10 h-10 rounded-full bg-[var(--kr-gov-blue)] text-white flex items-center justify-center text-sm">
+                            4</div>
+                        <span class="text-xs">정보입력</span>
+                    </div>
+                    <div class="step-inactive">
+                        <div
+                            class="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-sm">
+                            5</div>
+                        <span class="text-xs">가입완료</span>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="bg-white border border-[var(--kr-gov-border-light)] rounded-lg shadow-sm overflow-hidden p-8 md:p-12">
+                <form action="/uss/umt/EgovJoinStep5.do" method="post" enctype="multipart/form-data" class="space-y-10">
+                    <section>
+                        <h3 class="section-title">
+                            <span class="material-symbols-outlined text-[var(--kr-gov-blue)]">person</span>
+                            사용자 정보
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-1">
+                                <label class="form-label" for="user-id">아이디 <span class="text-red-500">*</span></label>
+                                <div class="flex gap-2">
+                                    <input class="form-input" id="user-id" name="mberId" placeholder="6~16자 영문, 숫자"
+                                        type="text" required />
+                                    <button
+                                        class="px-4 bg-gray-800 text-white text-sm font-bold rounded-[var(--kr-gov-radius)] whitespace-nowrap"
+                                        type="button">중복확인</button>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="form-label" for="user-name">이름 <span class="text-red-500">*</span></label>
+                                <input class="form-input bg-gray-50" id="user-name" name="mberNm" readonly=""
+                                    type="text" value="홍길동" />
+                                <p class="text-[12px] text-gray-500 mt-1 italic">본인인증 정보로 자동 입력되었습니다.</p>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="form-label" for="password">비밀번호 <span
+                                        class="text-red-500">*</span></label>
+                                <input class="form-input" id="password" name="password"
+                                    placeholder="영문, 숫자, 특수문자 조합 8자 이상" type="password" required />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="form-label" for="password-confirm">비밀번호 확인 <span
+                                        class="text-red-500">*</span></label>
+                                <input class="form-input" id="password-confirm" placeholder="비밀번호를 다시 입력하세요"
+                                    type="password" required />
+                            </div>
+                            <div class="md:col-span-2 space-y-1">
+                                <label class="form-label" for="contact">연락처 <span class="text-red-500">*</span></label>
+                                <div class="flex gap-2">
+                                    <select class="w-24 form-input" name="moblphonNo1">
+                                        <option>010</option>
+                                        <option>011</option>
+                                        <option>02</option>
+                                    </select>
+                                    <span class="flex items-center">-</span>
+                                    <input class="flex-1 form-input" name="moblphonNo2" type="text" required />
+                                    <span class="flex items-center">-</span>
+                                    <input class="flex-1 form-input" name="moblphonNo3" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h3 class="section-title">
+                            <span class="material-symbols-outlined text-[var(--kr-gov-blue)]">corporate_fare</span>
+                            소속 정보
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2 space-y-1">
+                                <label class="form-label" for="company-search">기관/기업명 <span
+                                        class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <input class="form-input pr-24" id="company-search" name="insttNm"
+                                        placeholder="기관명 또는 기업명을 검색하세요" type="text" required />
+                                    <button
+                                        class="absolute right-2 top-2 bottom-2 px-4 bg-[var(--kr-gov-blue)] text-white text-sm font-bold rounded-[var(--kr-gov-radius)] flex items-center gap-1"
+                                        type="button">
+                                        <span class="material-symbols-outlined text-sm">search</span> 검색
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="form-label" for="biz-number">사업자등록번호 <span
+                                        class="text-red-500">*</span></label>
+                                <input class="form-input bg-gray-50" id="biz-number" name="bizrno"
+                                    placeholder="기관 검색 시 자동 입력" type="text" />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="form-label" for="department">부서명</label>
+                                <input class="form-input" id="department" name="deptNm" placeholder="소속 부서를 입력하세요"
+                                    type="text" />
+                            </div>
+                            <div class="md:col-span-2 space-y-1">
+                                <label class="form-label">증빙 서류 업로드 <span class="text-red-500">*</span></label>
+                                <div class="mt-2 flex flex-col items-center justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                                    onclick="document.getElementById('file-upload').click()">
+                                    <div class="space-y-1 text-center">
+                                        <span
+                                            class="material-symbols-outlined text-4xl text-gray-400">upload_file</span>
+                                        <div class="flex text-sm text-gray-600">
+                                            <span
+                                                class="relative cursor-pointer font-bold text-[var(--kr-gov-blue)] hover:underline">
+                                                <span>파일 선택</span>
+                                                <input class="sr-only" id="file-upload" name="evidenceFile"
+                                                    type="file" />
+                                            </span>
+                                            <p class="pl-1">또는 파일을 여기로 끌어다 놓으세요</p>
+                                        </div>
+                                        <p class="text-xs text-gray-500">사업자등록증 또는 재직증명서 (PDF, JPG 최대 10MB)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="pt-8 border-t border-gray-100 flex flex-col md:flex-row gap-4">
+                        <button onclick="history.back()"
+                            class="flex-1 h-14 border border-[var(--kr-gov-border-light)] text-[var(--kr-gov-text-primary)] text-lg font-bold rounded-[var(--kr-gov-radius)] hover:bg-gray-50 transition-colors"
+                            type="button">
+                            이전 단계
+                        </button>
+                        <button
+                            class="flex-[2] h-14 bg-[var(--kr-gov-blue)] text-white text-lg font-bold rounded-[var(--kr-gov-radius)] hover:bg-[var(--kr-gov-blue-hover)] transition-colors shadow-lg"
+                            type="submit">
+                            회원가입 완료
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <p class="mt-10 text-sm text-[var(--kr-gov-text-secondary)] text-center max-w-2xl mx-auto leading-relaxed">
+                입력하신 정보는 회원가입 승인 절차를 위해 사용되며, 관리자의 승인 후 정식 서비스를 이용하실 수 있습니다. <br />
+                승인 결과는 입력하신 연락처(휴대폰/이메일)로 안내됩니다.
+            </p>
+        </div>
+    </main>
+    <footer class="bg-white border-t border-[var(--kr-gov-border-light)]">
+        <div class="max-w-7xl mx-auto px-4 lg:px-8 py-10">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <img alt="대한민국 정부 상징" class="h-8 grayscale"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUw404pm2QFmL61j73Dpfn72GnHGEg-KXTkLQ8WVJYUJ4iekrO0IvqJK8cd0cOSNSIh9Yq1LAodkSNj7oHtVAltdnnymj25ZzOI3l167qrrWmkEoYsZGu3ztT-YGo9se-fFR3NhBG3rZ8DYfs2vna0bxSzVG8VjryTnsz40LCDS2SN3-AeqXrbaPEva2ptmrQzO8iQSwbqSGyGKddlGf7FtnhHT25Cz5a5Xhk8MTve0BF4RWxN-ULiw64ZBbrTASIHQUaURqiZXyE" />
+                        <span class="text-xl font-black text-[var(--kr-gov-text-primary)]">탄소중립 CCUS 통합관리본부</span>
+                    </div>
+                    <address class="not-italic text-sm text-[var(--kr-gov-text-secondary)] leading-relaxed">
+                        (04551) 서울특별시 중구 세종대로 110 | 대표전화: 02-1234-5678 <br />
+                        © 2025 CCUS Integration Management Portal. All rights reserved.
+                    </address>
+                </div>
+                <div class="flex flex-col items-end gap-4">
+                    <div class="flex flex-wrap gap-6 text-sm font-bold">
+                        <a class="text-[var(--kr-gov-blue)] hover:underline" href="#">개인정보처리방침</a>
+                        <a class="text-[var(--kr-gov-text-primary)] hover:underline" href="#">이용약관</a>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="px-3 py-1 bg-[var(--kr-gov-bg-gray)] rounded-[var(--kr-gov-radius)] text-[11px] font-bold text-[var(--kr-gov-text-secondary)]">
+                            최종 수정일: <time datetime="2025-08-14">2025.08.14</time>
+                        </div>
+                        <img alt="웹 접근성 품질인증 마크" class="h-10"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzkKwREcbsB7LV3B2b7fBK7y2M_9Exa0vlGVzxNy2qM0n1LFMRlBCIa_XiIBeCfvv3DkMb9Z0D05Y-RMuAytisqlCS8QTpbtebgKnMnWoefEx5uJOgRW5H_8Pw9jmaRvkiW6sVRrifgIhrWc5hi2PRUGHgXn-q8-veHvu9wSwDhtcvbHKYyokgnP-hqdR10ahEAdBe4vFFkR88N_By8pjpp34KH9TwHOouRLBwdfVCsRGmDCS6wnvQZDwf6s4HyScSMXyJJGQjl8Y" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

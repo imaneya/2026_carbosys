@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-public class EgovLoginDataSource {
+public class EgovJoinDataSource {
 
     @Value("${spring.datasource.driver-class-name:cubrid.jdbc.driver.CUBRIDDriver}")
     private String driverClassName;
@@ -35,7 +35,7 @@ public class EgovLoginDataSource {
     @Value("${spring.datasource.hikari.minimum-idle:5}")
     private int minimumIdle;
 
-    @Value("${spring.datasource.hikari.max-lifetime:1800000}")
+    @Value("${spring.datasource.hikari.max-lifetime:180000}")
     private long maxLifetime;
 
     @Bean(name = "dataSource")
